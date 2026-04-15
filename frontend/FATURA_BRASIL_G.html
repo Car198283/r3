@@ -1017,5 +1017,57 @@
 
     initializeInvoice();
   </script>
+  <!DOCTYPE html>
+<html>
+<head>
+    <title>Fatura</title>
+</head>
+<body>
+
+    <!-- SEU FORMULÁRIO -->
+    <input type="text" id="cliente" placeholder="Nome do cliente">
+    <input type="text" id="descricao" placeholder="Produto">
+    <input type="number" id="quantidade" placeholder="Quantidade">
+    <input type="number" id="valor" placeholder="Valor unitário">
+    <input type="number" id="imposto" placeholder="Imposto (%)">
+
+    <button onclick="enviarFatura()">Gerar Fatura</button>
+
+    <div id="resultado"></div>
+
+    <!-- 🔥 SCRIPT AQUI (ANTES DO /body) -->
+    <script>
+    async function enviarFatura() {
+        const dados = {
+            cliente: document.getElementById("cliente").value,
+            itens: [
+                {
+                    descricao: document.getElementById("descricao").value,
+                    quantidade: parseInt(document.getElementById("quantidade").value),
+                    valor_unitario: parseFloat(document.getElementById("valor").value)
+                }
+            ],
+            imposto: parseFloat(document.getElementById("imposto").value || 0)
+        };
+
+        const resposta = await fetch("http://127.0.0.1:8001/fatura", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(dados)
+        });
+
+        const resultado = await resposta.json();
+
+        document.getElementById("resultado").innerHTML = `
+            <h3>Total: R$ ${resultado.total_final.toFixed(2)}</h3>
+        `;
+    }
+    </script>
+
+</body>
+</html>
+</script>
 </body>
 </html>
